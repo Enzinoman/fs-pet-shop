@@ -1,0 +1,25 @@
+###
+
+GET  http://localhost:8000/pets
+
+###
+
+POST http://localhost:8000/pets
+Content-Type: application/json
+
+{
+    "age": 1000,
+    "kind": "Unicorn",
+    "name": "Uley"
+  }
+
+###
+
+PATCH http://localhost:8000/pets
+Content-Type: application/json
+
+{
+    "age": 800,
+    "kind": "Unicorn",
+    "name": "Uley"
+  }
