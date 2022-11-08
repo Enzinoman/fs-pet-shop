@@ -1,8 +1,8 @@
-const express = require('express')
+const express = require('express');
 const { Client } = require('pg');
 const app = express();
 app.use(express.json());
-const PORT = 8000;
+const PORT = 8001;
 
 const morGan = require('morgan');
 const cond1 = /^\/pets\/(\d\d\d\d)$/;  
@@ -28,7 +28,7 @@ client.connect();
 app.get('/pets', (req, res) => {
     client.query('SELECT * FROM pets')
     .then(result => {
-        console.log(result.rows[0])
+        //console.log(result.rows[0])
         res.send(result.rows);
     })
     .catch(e => console.error(e.stack))
@@ -41,6 +41,7 @@ app.get('/pets', (req, res) => {
     let age = pets.age;
     let kind = pets.kind;
     let name = pets.name;
+    console.log(pets);
     client.query(`INSERT INTO pets (age, kind, name)
     VALUES (${age}, '${kind}', '${name}') RETURNING *`)
     .then(result =>{
@@ -49,20 +50,36 @@ app.get('/pets', (req, res) => {
     })
 });
 
-app.patch('/pets/:id', (req, res, next) => {
-    let pet=req.body;
-    let age = pet.age;
-    let kind = pet.kind;
-    let name= pet.name;
-    if((age != cond7 || age != cond8 || age != cond9) && (kind == null || kind == undefined || kind == 'null' || kind == 'undefined') && (name == null || name == undefined || name == 'null' || name == 'undefined')){
-        next();
+
+
+app.patch("/pets/:id", (req, res) => {
+    console.log(req.body);
+    let animal = req.body;
+    let setStr = "";
+    let elements = [];
+    for (element in animal) {
+      console.log(element, animal[element]);
+      elements.push(element + "='" + animal[element] + "'");
     }
-    client.query(`UPDATE pets SET name='${name}'`)
-    .then(result => {
-        res.status(200).send("updated");
-    })
-    .catch(e => console.error(e.stack))
-});
+    console.log(elements.toString());
+  
+    client.query(`UPDATE pets SET ${elements.toString()} WHERE id=${req.params.id} `)
+      .then((result) => {
+        res.send(req.body);
+      });
+  });
+
+  app.delete("/pets/:id", (req, res) => {
+    client.query(`DELETE FROM pets WHERE id = ${req.params.id}`)
+      //   res.send("DELETE pets Called");
+      .then((result) => {
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+        console.error(err);
+      });
+  });
 
 
 app.use((req, res, next) => {

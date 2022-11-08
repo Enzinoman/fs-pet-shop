@@ -1,10 +1,10 @@
 // set up dependencies
 const express = require('express');
-const { get } = require('httpie');
+//const { get } = require('httpie');
 const app = express();
 const port = 4000;
 const petFile = require('./pets.json');
-const share = require('./shared');
+
 // const errObj = new Error('<h1> There was an error! Please try again</h1>');
 
 
@@ -21,9 +21,9 @@ const cond6 = /^\/pets\/(\d\d\d\d)$/;  // /pets/3224kdjsalf (42) + (38) + (fred)
 
 
 // Use the subtract function
-const subResult = share.subtract(6, 3);
+//const subResult = share.subtract(6, 3);
 // Use the add function
-const addResult = share.add(6, 3);
+//const addResult = share.add(6, 3);
 
 
 
@@ -36,9 +36,9 @@ const outOfBoundsLit = "Your search does not match the requirements of our datab
 
 app.get('/boom' , function (req, res, next){
     // /^\/pets age$/
-    
-    console.log(`Condition 'boom!' is working`);
-    res.status(500).send('Internal Server Error');
+    next(errorHandler);
+    //console.log(`Condition 'boom!' is working`);
+    //res.status(500).send('Internal Server Error');
     
    
 })
@@ -97,7 +97,7 @@ app.get(multipleDigits, function (req, res, next){
 app.get('/pets/-*',(req, res, next) => {
     // res.status(errObj)
     
-
+        // next(errorHandler);
         res.status(404).send('Not Found');
     
     
@@ -113,7 +113,10 @@ app.get('/pets/-*',(req, res, next) => {
   
 
 
-
+  function errorHandler (err, req, res, next) {
+    
+    res.status(500).send('This is my error message')
+  } 
 
 
 
